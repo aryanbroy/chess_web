@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
-import { GAME_OVER, INIT_GAME, MOVE } from "./messages";
+import { COUNT, GAME_OVER, INIT_GAME, MOVE } from "./messages";
 
 export class Game {
   public player1: WebSocket;
@@ -8,6 +8,7 @@ export class Game {
   private board: Chess;
   private startTime: Date;
   private moveCount = 0;
+  public moves: string[] = [];
 
   constructor(player1: WebSocket, player2: WebSocket) {
     this.player1 = player1;
@@ -48,6 +49,7 @@ export class Game {
 
     try {
       this.board.move(move);
+      this.moves.push(move.to);
     } catch (error) {
       console.log(error);
       return;
@@ -87,6 +89,26 @@ export class Game {
       }
       return;
     }
+
+    this.player1.send(
+      JSON.stringify({
+        type: COUNT,
+        payload: {
+          moveCount: this.moveCount,
+          latestMove: this.moves,
+        },
+      })
+    );
+
+    this.player2.send(
+      JSON.stringify({
+        type: COUNT,
+        payload: {
+          moveCount: this.moveCount,
+          latestMove: this.moves,
+        },
+      })
+    );
 
     if (this.moveCount % 2 === 0) {
       this.player2.send(

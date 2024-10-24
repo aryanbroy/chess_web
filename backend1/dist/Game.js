@@ -6,6 +6,7 @@ const messages_1 = require("./messages");
 class Game {
     constructor(player1, player2) {
         this.moveCount = 0;
+        this.moves = [];
         this.player1 = player1;
         this.player2 = player2;
         this.board = new chess_js_1.Chess();
@@ -30,6 +31,7 @@ class Game {
         }
         try {
             this.board.move(move);
+            this.moves.push(move.to);
         }
         catch (error) {
             console.log(error);
@@ -62,6 +64,20 @@ class Game {
             }
             return;
         }
+        this.player1.send(JSON.stringify({
+            type: messages_1.COUNT,
+            payload: {
+                moveCount: this.moveCount,
+                latestMove: this.moves,
+            },
+        }));
+        this.player2.send(JSON.stringify({
+            type: messages_1.COUNT,
+            payload: {
+                moveCount: this.moveCount,
+                latestMove: this.moves,
+            },
+        }));
         if (this.moveCount % 2 === 0) {
             this.player2.send(JSON.stringify({
                 type: messages_1.MOVE,
