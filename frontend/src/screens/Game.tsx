@@ -31,7 +31,6 @@ export default function Game() {
         console.log("Move received", message);
         const move = message.payload;
         chess.move(move);
-        setChess(chess);
         setBoard(chess.board());
       }
 
@@ -49,7 +48,12 @@ export default function Game() {
       <div className="pt-8 max-w-screen-lg w-full">
         <div className="grid grid-cols-6 gap-4 w-full">
           <div className="col-span-4 w-full">
-            <ChessBoard board={board} socket={socket} />
+            <ChessBoard
+              chess={chess}
+              setBoard={setBoard}
+              board={board}
+              socket={socket}
+            />
           </div>
           <div className="col-span-2">
             <button
