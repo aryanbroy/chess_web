@@ -24,7 +24,6 @@ class Game {
         }));
     }
     makeMove(socket, move) {
-        console.log(move);
         if ((this.moveCount % 2 === 0 && socket !== this.player1) ||
             (this.moveCount % 2 === 1 && socket !== this.player2)) {
             return;
@@ -49,6 +48,18 @@ class Game {
                     winner: this.board.turn() === "w" ? "black" : "white",
                 },
             }));
+            if (this.moveCount % 2 === 0) {
+                this.player2.send(JSON.stringify({
+                    type: messages_1.MOVE,
+                    payload: move,
+                }));
+            }
+            else {
+                this.player1.send(JSON.stringify({
+                    type: messages_1.MOVE,
+                    payload: move,
+                }));
+            }
             return;
         }
         if (this.moveCount % 2 === 0) {

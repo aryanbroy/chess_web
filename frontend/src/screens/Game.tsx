@@ -11,6 +11,8 @@ export default function Game() {
   const socket = useSocket();
   const [chess, setChess] = useState(new Chess());
   const [board, setBoard] = useState(chess.board());
+  const [gameOver, setGameOver] = useState(false);
+  const [winner, setWinner] = useState(null);
 
   useEffect(() => {
     if (!socket) {
@@ -21,6 +23,8 @@ export default function Game() {
       const message = JSON.parse(event.data);
 
       if (message.type === INIT_GAME) {
+        setGameOver(false);
+        setWinner(null);
         console.log("Game initialized");
         console.log(message);
         setChess(new Chess());
@@ -36,6 +40,8 @@ export default function Game() {
 
       if (message.type === GAME_OVER) {
         console.log("Game over", message);
+        setGameOver(true);
+        setWinner(message.payload.winner);
       }
     };
   }, [socket, chess]);
@@ -62,6 +68,9 @@ export default function Game() {
             >
               Play
             </button>
+            {gameOver && (
+              <div className="text-4xl font-bold mt-10">{winner} won!!</div>
+            )}
           </div>
         </div>
       </div>

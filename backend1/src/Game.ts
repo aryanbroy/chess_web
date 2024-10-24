@@ -39,7 +39,6 @@ export class Game {
       to: string;
     }
   ) {
-    console.log(move);
     if (
       (this.moveCount % 2 === 0 && socket !== this.player1) ||
       (this.moveCount % 2 === 1 && socket !== this.player2)
@@ -71,6 +70,21 @@ export class Game {
           },
         })
       );
+      if (this.moveCount % 2 === 0) {
+        this.player2.send(
+          JSON.stringify({
+            type: MOVE,
+            payload: move,
+          })
+        );
+      } else {
+        this.player1.send(
+          JSON.stringify({
+            type: MOVE,
+            payload: move,
+          })
+        );
+      }
       return;
     }
 
